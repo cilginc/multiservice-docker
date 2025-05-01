@@ -5,7 +5,7 @@ services:
     image: mongo
     container_name: mongo
     volumes:
-      - mongo-data:/data/db
+      - ./data:/data/db
     networks:
       - mongo-network
 
@@ -14,7 +14,10 @@ services:
     build: ./backend/.
     container_name: backend
     ports:
-      - 5000:5000
+      - 5000:3001
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/tasks
+      - PORT=3001
     networks:
       - mongo-network
       - backend-network

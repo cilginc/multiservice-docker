@@ -1,13 +1,13 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
-const PORT = 5000
+const PORT = process.env.PORT
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect("mongodb://mongodb:27017/tasks", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
