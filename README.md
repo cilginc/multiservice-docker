@@ -47,3 +47,10 @@ docker compose up -d --build
 2. Now go to Drilldown -> Logs. Now you can see all the log files. 
 
 
+## Using CD with Github Actions
+
+1. You need to manage Github Secrets first:
+ - `REMOTE_HOST`:IP of the server
+ - `REMOTE_USER`: User of the server
+ - `SSH_KEY`: Your private SSH key
+ - `SSH_PORT`: Your SSH port 
