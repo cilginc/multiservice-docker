@@ -14,7 +14,7 @@ export default function NotFound() {
           </div>
           <h1 className="text-4xl font-bold tracking-tight">Page not found</h1>
           <p className="text-muted-foreground text-lg">
-            Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
+            Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved or deleted.
           </p>
         </div>
 
