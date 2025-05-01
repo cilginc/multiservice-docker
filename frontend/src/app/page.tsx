@@ -22,7 +22,7 @@ export default function TaskManager() {
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
 
   // API URL
-  const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/tasks';
+  const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/tasks';
 
   // Load tasks from server
   useEffect(() => {
