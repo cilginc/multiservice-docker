@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  # 27017
+  mongodb:
+    image: mongo
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mongo-network
+
+  # 5000
+  backend:
+    build: ./backend/.
+    container_name: backend
+    ports:
+      - 5000:5000
+    networks:
+      - mongo-network
+      - backend-network
+
+  frontend:
+    build: ./frontend/.
+    container_name: frontend
+    ports:
+      - 3000:3000
+    networks:
+      - backend-network
+
+
+volumes:
+  mongo-data:
+
+
+networks:
+  mongo-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
