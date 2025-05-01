@@ -5,7 +5,7 @@ services:
     image: mongo
     container_name: mongo
     volumes:
-      - ./data:/data/db
+      - mongo-data:/data/db
     networks:
       - mongo-network
     restart: unless-stopped
@@ -46,16 +46,83 @@ services:
     networks:
       - backend-network
       - frontend-network
+      - monitor
 
   # 6379
   redis:
     image: redis:7
     container_name: redis
     volumes:
-      - ./data:/data
+      - redis-data:/data
     restart: unless-stopped
     networks:
       - backend-network
+    
+    # 3000
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - monitor
+    environment:
+      - GF_SERVER_ROOT_URL=http://localhost:3000/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_HTTP_PORT=4000
+      - GF_LOG_LEVEL=debug
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+
+  # 3100
+  loki:
+    image: grafana/loki:3.4
+    command: -config.file=/etc/loki/local-config.yaml
+    container_name: loki
+    networks:
+      - monitor
+    volumes:
+      - loki-data:/loki:rw
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail-config.yaml:/etc/promtail/promtail.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail.yaml
+    restart: unless-stopped
+    networks:
+      - monitor
+
+volumes:
+  mongo-data:
+  redis-data:
+  grafana-data:
+  loki-data:
 
 networks:
   mongo-network:
@@ -63,4 +130,6 @@ networks:
   backend-network:
     driver: bridge
   frontend-network:
+    driver: bridge
+  monitor:
     driver: bridge
