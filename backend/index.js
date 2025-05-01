@@ -7,7 +7,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect('mongodb://localhost:27017/tasks', {
+mongoose.connect("mongodb://mongodb:27017/tasks", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
