@@ -14,10 +14,10 @@ services:
     build: ./backend/.
     container_name: backend
     ports:
-      - 5000:3001
+      - 5000:5000
     environment:
       - MONGO_URI=mongodb://mongodb:27017/tasks
-      - PORT=3001
+      - PORT=5000
     networks:
       - mongo-network
       - backend-network
@@ -25,6 +25,8 @@ services:
   frontend:
     build: ./frontend/.
     container_name: frontend
+    environment:
+      - BACKEND_API=http://localhost:5000/tasks
     ports:
       - 3000:3000
     networks:
