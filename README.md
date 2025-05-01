@@ -37,3 +37,13 @@ cd multiservice-docker
 docker compose up -d --build
 ```
 ---
+
+## Accessing Grafana
+
+1. Simply go to [http://localhost:3000/grafana](http://localhost:3000/grafana).
+- User: `admin`
+- Password: `admin`
+
+2. Now go to Drilldown -> Logs. Now you can see all the log files. 
+
+
