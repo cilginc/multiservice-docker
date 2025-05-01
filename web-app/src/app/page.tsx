@@ -13,82 +13,97 @@ interface Task {
   title: string
   completed: boolean
   createdAt: string
-  priority: "low" | "medium" | "high"
+  priority: 'low' | 'medium' | 'high'
 }
 
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([])
-  const [newTask, setNewTask] = useState("")
-  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium")
+  const [newTask, setNewTask] = useState('')
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
 
-  // Load tasks from localStorage on initial render
+  // API URL
+  const API = 'http://localhost:5000/tasks'
+
+  // Load tasks from server
   useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks")
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks))
-    }
+    fetch(API)
+      .then((res) => res.json())
+      .then(setTasks)
+      .catch((err) => console.error('Error loading tasks:', err))
   }, [])
 
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks))
-  }, [tasks])
+  const addTask = async () => {
+    if (newTask.trim() === '') return
 
-  const addTask = () => {
-    if (newTask.trim() === "") return
-
-    const task: Task = {
-      id: Date.now().toString(),
+    const task: Omit<Task, 'id'> = {
       title: newTask,
       completed: false,
       createdAt: new Date().toISOString(),
       priority,
     }
 
-    setTasks([...tasks, task])
-    setNewTask("")
-    setPriority("medium")
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(task),
+    })
+    const newCreatedTask = await res.json()
+    setTasks([...tasks, newCreatedTask])
+    setNewTask('')
+    setPriority('medium')
   }
 
-  const toggleTaskStatus = (id: string) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
+  const toggleTaskStatus = async (id: string) => {
+    const updated = tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    )
+    setTasks(updated)
+    const task = updated.find((t) => t.id === id)
+    if (task) {
+      await fetch(`${API}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(task),
+      })
+    }
   }
 
-  const deleteTask = (id: string) => {
+  const deleteTask = async (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id))
+    await fetch(`${API}/${id}`, { method: 'DELETE' })
   }
-
-  const activeTasks = tasks.filter((task) => !task.completed)
-  const completedTasks = tasks.filter((task) => task.completed)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
     })
   }
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
     })
   }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800 hover:bg-red-200"
-      case "medium":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-      case "low":
-        return "bg-green-100 text-green-800 hover:bg-green-200"
+      case 'high':
+        return 'bg-red-100 text-red-800 hover:bg-red-200'
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+      case 'low':
+        return 'bg-green-100 text-green-800 hover:bg-green-200'
       default:
-        return "bg-slate-100 text-slate-800 hover:bg-slate-200"
+        return 'bg-slate-100 text-slate-800 hover:bg-slate-200'
     }
   }
+
+  const activeTasks = tasks.filter((task) => !task.completed)
+  const completedTasks = tasks.filter((task) => task.completed)
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
