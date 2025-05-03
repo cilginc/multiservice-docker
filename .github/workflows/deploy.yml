@@ -28,7 +28,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ secrets.REMOTE_PATH }}
-            export USERNAME=${{ github.repository_owner }}
+            export GITHUB_USERNAME=${{ github.repository_owner }}
             docker compose pull
             docker compose up -d
 

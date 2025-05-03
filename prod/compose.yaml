@@ -12,7 +12,7 @@ services:
 
   # 5000
   backend:
-    image: ghcr.io/${USERNAME}/multiservice-docker-backend
+    image: ghcr.io/${GITHUB_USERNAME}/multiservice-docker-backend:latest
     container_name: backend
     environment:
       - MONGO_URI=mongodb://mongodb:27017/tasks
@@ -25,7 +25,7 @@ services:
 
   # 3000
   frontend:
-    image: ghcr.io/${USERNAME}/multiservice-docker-frontend
+    image: ghcr.io/${GITHUB_USERNAME}/multiservice-docker-frontend:latest
     container_name: frontend
     environment:
       - BACKEND_API=http://localhost:3000/tasks
