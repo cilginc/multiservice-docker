@@ -54,3 +54,8 @@ docker compose up -d --build
  - `REMOTE_USER`: User of the server
  - `SSH_KEY`: Your private SSH key
  - `SSH_PORT`: Your SSH port 
+ - `REMOTE_PATH`: Remote path of directory you want such as `/home/user/deploy` 
+
+2. Don't Forget to change workflow permissions to read and write.
+- This step is required for adding containers to GHCR.
+- Now Github Actions will automaticly deploy your project after push.
