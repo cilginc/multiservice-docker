@@ -28,19 +28,19 @@ jobs:
       # Build and tag the Docker image for GHCR
       - name: Build Docker image
         run: |
-         cd backend && docker build -t ghcr.io/${{ github.repository_owner }}/backend .
+         cd backend && docker build -t ghcr.io/${{ github.repository_owner }}/multiservice-docker-backend .
 
       # Push the Docker image to GHCR
       - name: Push Docker image
         run: |
-         cd backend && docker push ghcr.io/${{ github.repository_owner }}/backend
+         cd backend && docker push ghcr.io/${{ github.repository_owner }}/multiservice-docker-backend
         
       # Build and tag the Docker image for GHCR
       - name: Build Docker image
         run: |
-          cd frontend && docker build -t ghcr.io/${{ github.repository_owner }}/frontend .
+          cd frontend && docker build -t ghcr.io/${{ github.repository_owner }}/multiservice-docker-frontend .
 
       # Push the Docker image to GHCR
       - name: Push Docker image
         run: |
-          cd frontend && docker push ghcr.io/${{ github.repository_owner }}/frontend
+          cd frontend && docker push ghcr.io/${{ github.repository_owner }}/multiservice-docker-frontend
